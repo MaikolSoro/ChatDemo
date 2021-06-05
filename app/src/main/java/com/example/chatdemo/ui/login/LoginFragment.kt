@@ -5,17 +5,57 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.chatdemo.R
+import androidx.navigation.fragment.findNavController
+import com.example.chatdemo.databinding.FragmentLoginBinding
+import com.example.chatdemo.model.ChatUser
+import com.google.android.material.textfield.TextInputLayout
 
 
 class LoginFragment : Fragment() {
 
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+
+
+        binding.button.setOnClickListener{
+            authenticateTheUser()
+        }
+        return binding.root
     }
 
+    private fun authenticateTheUser() {
+        val firstName = binding.firstNameEditText.text.toString()
+        val userName = binding.usernameEditText.text.toString()
+
+        if (validateInput(firstName, binding.firstNameInputLayout)
+            && validateInput(userName, binding.usernameInputLayout)){
+            val chatUser = ChatUser(firstName, userName)
+            val action = LoginFragmentDirections.actionLoginFragmentToChannelFragment(chatUser)
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun validateInput(inputText: String, textInputLayout: TextInputLayout): Boolean {
+        return if(inputText.length <= 3){
+            textInputLayout.isErrorEnabled = true
+            textInputLayout.error = "* Minimum 4 Characters Allowed"
+            false
+        } else {
+            textInputLayout.isErrorEnabled = false
+            textInputLayout.error = null
+            true
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
