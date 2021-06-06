@@ -1,6 +1,24 @@
 # ChatDemo
 Build a Chat App using Stream Chat SDK for Android
 
+Build a fully functional chat app with the Stream Chat SDK for Android. 
+This SDK allows you to create any type of chat or messaging experience for Android. 
+The application will have four different fragments and a single activity.
+
+## Architecture and Libraries 📰📱
+- Model-View-ViewModel (MVVM)
+- Navigation
+- Stream SDK
+- Night Mode 
+- 
+### Contributing
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request and enjoy! :D
+6. 
+# 📷 Preview
 <img height="700" src="https://user-images.githubusercontent.com/46753453/120912413-1eb62600-c64c-11eb-851e-6b312293e2e4.png" />
 <img height="700" src="https://user-images.githubusercontent.com/46753453/120912489-caf80c80-c64c-11eb-8415-89fc928dfa90.png" />
 <img height="700" src="https://user-images.githubusercontent.com/46753453/120912490-cb90a300-c64c-11eb-8bba-4ab4f15a82b7.png" />
