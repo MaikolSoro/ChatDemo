@@ -1,5 +1,6 @@
 package com.example.chatdemo.ui.channel
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
@@ -30,14 +31,16 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 
 class ChannelFragment : Fragment() {
 
+
     private val args: ChannelFragmentArgs by navArgs()
 
-    private var _binding: FragmentChannelBinding?= null
+    private var _binding: FragmentChannelBinding? = null
     private val binding get() = _binding!!
 
     private val client = ChatClient.instance()
     private lateinit var user: User
 
+    @SuppressLint("WrongConstant")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,16 +55,76 @@ class ChannelFragment : Fragment() {
         binding.channelsView.setChannelDeleteClickListener { channel ->
             deleteChannel(channel)
         }
+
+        binding.channelListHeaderView.setOnActionButtonClickListener {
+            findNavController().navigate(R.id.action_channelFragment_to_usersFragment)
+        }
+
+        binding.channelsView.setChannelItemClickListener { channel ->
+            val action = ChannelFragmentDirections.actionChannelFragmentToChatFragment(channel.cid)
+            findNavController().navigate(action)
+        }
+
         binding.channelListHeaderView.setOnUserAvatarClickListener {
             binding.drawerLayout.openDrawer(Gravity.START)
         }
+
         return binding.root
+    }
+
+    private fun setupUser() {
+        if (client.getCurrentUser() == null) {
+            user = if (args.chatUser.firstName.contains("Maikol")) {
+                User(
+                    id = args.chatUser.username,
+                    extraData = mutableMapOf(
+                        "name" to args.chatUser.firstName,
+                        "county" to "Costa Rica",
+                        "image" to "https://yt3.ggpht.com/ytc/AAUvwniNg3lwIeJ-ybvA1xuWBEzLoYA5KPxnKrojub0zhg=s900-c-k-c0x00ffffff-no-rj"
+                    )
+                )
+            } else {
+                User(
+                    id = args.chatUser.username,
+                    extraData = mutableMapOf(
+                        "name" to args.chatUser.firstName
+                    )
+                )
+            }
+            val token = client.devToken(user.id)
+            client.connectUser(
+                user = user,
+                token = token
+            ).enqueue { result ->
+                if (result.isSuccess) {
+                    Log.d("ChannelFragment", "Success Connecting the User")
+                } else {
+                    Log.d("ChannelFragment", result.error().message.toString())
+                }
+            }
+        }
+    }
+
+    private fun setupChannels() {
+        val filters = Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.`in`("members", listOf(client.getCurrentUser()!!.id))
+        )
+        val viewModelFactory = ChannelListViewModelFactory(
+            filters,
+            ChannelListViewModel.DEFAULT_SORT
+        )
+        val listViewModel: ChannelListViewModel by viewModels { viewModelFactory }
+        val listHeaderViewModel: ChannelListHeaderViewModel by viewModels()
+
+        listHeaderViewModel.bindView(binding.channelListHeaderView, viewLifecycleOwner)
+        listViewModel.bindView(binding.channelsView, viewLifecycleOwner)
     }
 
     private fun setupDrawer() {
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
-            if(menuItem.itemId == R.id.logout_menu) {
-                 logout()
+            if (menuItem.itemId == R.id.logout_menu) {
+                logout()
             }
             false
         }
@@ -75,86 +138,37 @@ class ChannelFragment : Fragment() {
         headerName.text = currentUser.name
     }
 
-    private fun deleteChannel(channel: Channel){
-        ChatDomain.instance().useCases.deleteChannel(channel.id).enqueue{ result ->
+    private fun deleteChannel(channel: Channel) {
+        ChatDomain.instance().useCases.deleteChannel(channel.cid).enqueue { result ->
             if (result.isSuccess) {
                 showToast("Channel: ${channel.name} removed!")
             } else {
-                Log.d("ChannelFragment", result.error().message.toString())
+                Log.e("ChannelFragment", result.error().message.toString())
             }
         }
     }
+
     private fun logout() {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setPositiveButton("Yes") {_, _ ->
+        builder.setPositiveButton("Yes") { _, _ ->
             client.disconnect()
             findNavController().navigate(R.id.action_channelFragment_to_loginFragment)
             showToast("Logged out successfully")
         }
-        builder.setNegativeButton("No"){_, _-> }
+        builder.setNegativeButton("No") { _, _ -> }
         builder.setTitle("Logout?")
         builder.setMessage("Are you sure you want to logout?")
         builder.create().show()
     }
 
     private fun showToast(message: String) {
-            Toast.makeText(
-                requireContext(),
-                message,
-                Toast.LENGTH_SHORT
-            ).show()
+        Toast.makeText(
+            requireContext(),
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
-
-    private fun setupUser() {
-        if (client.getCurrentUser() == null){
-            user = if(args.chatUser.firstName.contains("Maikol")){
-                User(
-                    id = args.chatUser.username,
-                    extraData = mutableMapOf(
-                        "name" to args.chatUser.firstName,
-                        "country" to "Costa Rica",
-                        "image" to "https://yt3.ggpht.com/ytc/AAUvwniNg3lwIeJ-ybvA1xuWBEzLoYA5KPxnKrojub0zhg=s900-c-k-c0x00ffffff-no-rj"
-                    ),
-                )
-            } else{
-                User(
-                    id = args.chatUser.username,
-                    extraData = mutableMapOf(
-                        "name" to args.chatUser.firstName
-                    )
-                )
-            }
-            val token = client.devToken(user.id)
-            client.connectUser(
-                user,
-                token
-            ).enqueue { result ->
-                if(result.isSuccess) {
-                    Log.d("ChannelFragment", "Success Connecting the User")
-                } else {
-                    Log.d("ChannelFragment", result.error().message.toString())
-                }
-
-            }
-        }
-    }
-    private fun setupChannels() {
-        val filters = Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(client.getCurrentUser()!!.id))
-        )
-        val viewModelFactory = ChannelListViewModelFactory(
-                filters,
-            ChannelListViewModel.DEFAULT_SORT
-        )
-        val listViewModel: ChannelListViewModel by viewModels { viewModelFactory }
-        val listHeaderViewModel: ChannelListHeaderViewModel by viewModels()
-
-        listHeaderViewModel.bindView(binding.channelListHeaderView, viewLifecycleOwner)
-            listViewModel.bindView(binding.channelsView, viewLifecycleOwner)
-
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
