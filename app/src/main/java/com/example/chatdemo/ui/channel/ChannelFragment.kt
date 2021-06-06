@@ -2,18 +2,21 @@ package com.example.chatdemo.ui.channel
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.example.chatdemo.R
 import com.example.chatdemo.databinding.FragmentChannelBinding
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
@@ -39,9 +42,34 @@ class ChannelFragment : Fragment() {
 
         setupUser()
         setupChannels()
+        setupDrawer()
+
+        binding.channelListHeaderView.setOnUserAvatarClickListener {
+            binding.drawerLayout.openDrawer(Gravity.START)
+        }
         return binding.root
     }
 
+    private fun setupDrawer() {
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            if(menuItem.itemId == R.id.logout_menu) {
+                 logout()
+            }
+            false
+        }
+        val currentUser = client.getCurrentUser()!!
+        val headerView = binding.navigationView.getHeaderView(0)
+        val headerAvatar = headerView.findViewById<AvatarView>(R.id.avatarView)
+        headerAvatar.setUserData(currentUser)
+        val headerId = headerView.findViewById<TextView>(R.id.id_textView)
+        headerId.text = currentUser.id
+        val headerName = headerView.findViewById<TextView>(R.id.name_textView)
+        headerName.text = currentUser.name
+    }
+
+    private fun logout() {
+
+    }
 
 
     private fun setupUser() {
