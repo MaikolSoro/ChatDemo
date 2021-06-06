@@ -16,7 +16,7 @@ The application will have four different fragments and a single activity.
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request and enjoy! :D
-6. 
+
 # 📷 Preview
 <img height="700" src="https://user-images.githubusercontent.com/46753453/120912413-1eb62600-c64c-11eb-851e-6b312293e2e4.png" />
 <img height="700" src="https://user-images.githubusercontent.com/46753453/120912489-caf80c80-c64c-11eb-8415-89fc928dfa90.png" />
