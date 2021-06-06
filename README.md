@@ -10,7 +10,6 @@ The application will have four different fragments and a single activity.
 - Navigation
 - Stream SDK
 - Night Mode 
-- 
 ### Contributing
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
