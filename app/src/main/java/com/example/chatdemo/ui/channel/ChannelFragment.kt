@@ -1,5 +1,6 @@
 package com.example.chatdemo.ui.channel
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -8,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.chatdemo.R
 import com.example.chatdemo.databinding.FragmentChannelBinding
@@ -68,7 +71,24 @@ class ChannelFragment : Fragment() {
     }
 
     private fun logout() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setPositiveButton("Yes") {_, _ ->
+            client.disconnect()
+            findNavController().navigate(R.id.action_channelFragment_to_loginFragment)
+            showToast("Logged out successfully")
+        }
+        builder.setNegativeButton("No"){_, _-> }
+        builder.setTitle("Logout?")
+        builder.setMessage("Are you sure you want to logout?")
+        builder.create().show()
+    }
 
+    private fun showToast(message: String) {
+            Toast.makeText(
+                requireContext(),
+                message,
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
 
