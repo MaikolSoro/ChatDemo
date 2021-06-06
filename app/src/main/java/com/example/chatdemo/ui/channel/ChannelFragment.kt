@@ -16,9 +16,11 @@ import androidx.navigation.fragment.navArgs
 import com.example.chatdemo.R
 import com.example.chatdemo.databinding.FragmentChannelBinding
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.ui.avatar.AvatarView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
@@ -47,6 +49,9 @@ class ChannelFragment : Fragment() {
         setupChannels()
         setupDrawer()
 
+        binding.channelsView.setChannelDeleteClickListener { channel ->
+            deleteChannel(channel)
+        }
         binding.channelListHeaderView.setOnUserAvatarClickListener {
             binding.drawerLayout.openDrawer(Gravity.START)
         }
@@ -70,6 +75,15 @@ class ChannelFragment : Fragment() {
         headerName.text = currentUser.name
     }
 
+    private fun deleteChannel(channel: Channel){
+        ChatDomain.instance().useCases.deleteChannel(channel.id).enqueue{ result ->
+            if (result.isSuccess) {
+                showToast("Channel: ${channel.name} removed!")
+            } else {
+                Log.d("ChannelFragment", result.error().message.toString())
+            }
+        }
+    }
     private fun logout() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setPositiveButton("Yes") {_, _ ->
