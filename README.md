@@ -1,4 +1,4 @@
-# ChatDemo
+# Chat Demo
 Build a Chat App using Stream Chat SDK for Android
 
 Build a fully functional chat app with the Stream Chat SDK for Android. 
