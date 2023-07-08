@@ -51,9 +51,9 @@ The application will have four different fragments and a single activity.
 |                              Pantalla Main                                   |                               Result                                         |
 |:----------------------------------------------------------------------------:|:----------------------------------------------------------------------------:|
 | <img src="https://user-images.githubusercontent.com/46753453/120913864-7efe9500-c657-11eb-8da1-2840ef14b1a5.png" style="height: 50%; width:50%;"/> | <img src="https://user-images.githubusercontent.com/46753453/120914014-82465080-c658-11eb-8816-cbdf6a7c0a43.png" style="height: 50%; width:50%;"/>
-### Home.
+### Examples Chat.
 
-|                              Pantalla principal                              |                               Añadiendo tareas                               |
+|                              Pantalla Main                              |                               Result                                         |
 |:----------------------------------------------------------------------------:|:----------------------------------------------------------------------------:|
 | <img src="https://user-images.githubusercontent.com/46753453/120914015-83777d80-c658-11eb-98ba-1db4b75c7c69.png" style="height: 50%; width:50%;"/> | <img src="https://user-images.githubusercontent.com/46753453/120914016-84101400-c658-11eb-82fb-081e0935216d.png" style="height: 50%; width:50%;"/>
 
